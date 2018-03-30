@@ -29,7 +29,7 @@ This is the list of server API used for Uniquira
     lastName: string,
     email: string
 }
-
+```
 ## API
 * ### `/api/register`
 **Method**: `POST`  
@@ -48,6 +48,7 @@ This is the list of server API used for Uniquira
 }
 ```
 
+## API
 * ### `/api/gpa`
 **Method:** `POST`
 **Body:**
@@ -63,6 +64,7 @@ This is the list of server API used for Uniquira
     gpa: number
 }
 ```
+## API
 * ### `/api/completed_courses`
 **Method:** `POST`
 **Body:**
@@ -84,6 +86,7 @@ This is the list of server API used for Uniquira
     }
 ]
 ```
+## API
 * ### `/api/current_courses`
 **Method:** `POST`
 **Body:**
@@ -103,6 +106,7 @@ This is the list of server API used for Uniquira
 ]
 ```
 
+## API
 * ### `/api/feedback/edit`
 **Method:** `POST`    
 **Body:**
@@ -114,6 +118,7 @@ This is the list of server API used for Uniquira
     token: string
 }
 ```
+## API
 * ### `/api/courses`
 **Method:** `POST`
 **Body:**
@@ -134,6 +139,7 @@ This is the list of server API used for Uniquira
     }
 ]
 ```
+## API
 * ### `/api/users`
 **Method:** `POST`
 **Body:**
@@ -156,6 +162,7 @@ This is the list of server API used for Uniquira
 ]
 ```
 
+## API
 * ### `/api/course`
 **Method:** `POST`
 **Body:**
