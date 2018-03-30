@@ -11,7 +11,7 @@ This is the list of server API used for Uniquira
 ```
 
 ## API
-* ### `/login`
+* ### `/api/login
 **Method**: `POST`  
 **Body:**
 ```
@@ -29,106 +29,158 @@ This is the list of server API used for Uniquira
     lastName: string,
     email: string
 }
-```
 
-* ### `/question/ask`
-**Method:** `POST`
+## API
+* ### `/api/register`
+**Method**: `POST`  
 **Body:**
 ```
 {
-    question: string,
-    description: string,
-    userId: number
+    email: string,
+    firstName: string,
+    lastName: string
 }
 ```
 **Response:**
 ```
 {
-    question: string,
-    description: string,
-    userId: number,
-    id: number
+    password: string
 }
 ```
-* ### `/question/list/{page}`
-**Method:** `GET`
+
+* ### `/api/gpa`
+**Method:** `POST`
+**Body:**
+```
+{
+    userId: number,
+    token: string
+}
+```
+**Response:**
+```
+{
+    gpa: number
+}
+```
+* ### `/api/completed_courses`
+**Method:** `POST`
+**Body:**
+```
+{
+    userId: number,
+    token: string
+}
+```
 **Response:**
 ```
 [
     {
-        rating: number,
-        question: string,
-        description: string,
-        timestamp: number,
-        answersCount: number,
-        id: number,
-        bestAnswer: {
-            id: number,
-            answer: string,
-            timestamp: string,
-            rating: number
-        }
+        abbr: string,
+        name: string,
+        grade: string,
+        term: string,
+        credit: number
     }
 ]
 ```
-* ### `/question/{id}`
-**Method:** `GET`
-**Response:**
-```
-{
-    question: string,
-    description: string,
-    rating: number,
-    timestamp: number,
-    id: number,
-    answers: [
-        {
-            id: number,
-            answer: string,
-            timestamp: string,
-            rating: number
-        }
-    ]
-}
-```
-
-* ### `/question/vote/{id}?isup`
-**Query params:** `isup` {*boolean*} - is it positive vote or negative    
-**Method:** `GET`    
-**Response:**
-```
-{
-    question: string,
-    description: string,
-    rating: number,
-    timestamp: number,
-    id: number,
-    rating: number
-}
-```
-
-* ### `/answer`
+* ### `/api/current_courses`
 **Method:** `POST`
 **Body:**
 ```
 {
-    questionId: number,
-    answer: string,
     userId: number,
-    id: number
-
+    token: string
 }
 ```
-
-* ### `/answer/vote?isup`
-**Query params:** `isup` {*boolean*} - is it positive vote or negative   
-**Method:** `GET`   
 **Response:**
+```
+[
+    {
+        abbr: string,
+        name: string
+    }
+]
+```
+
+* ### `/api/feedback/edit`
+**Method:** `POST`    
+**Body:**
+```
+{
+    courseId: number,
+    feedback: string,
+    userId: number,
+    token: string
+}
+```
+* ### `/api/courses`
+**Method:** `POST`
+**Body:**
+```
+{
+    name: string,
+    userId: number,
+    token: string
+}
+```
+**Response:**
+```
+[
+    {
+        name: string,
+        abbr: string,
+        id: number
+    }
+]
+```
+* ### `/api/users`
+**Method:** `POST`
+**Body:**
+```
+{
+    name: string,
+    userId: number,
+    token: string
+}
+```
+**Response:**
+```
+[
+    {
+        firstName: string,
+        lastName: string,
+        id: number,
+        major: string
+    }
+]
+```
+
+* ### `/api/course`
+**Method:** `POST`
+**Body:**
 ```
 {
     id: number,
-    answer: string,
-    timestamp: string,
-    rating: number
+    userId: number,
+    token: string
 }
+```
+**Response:**
+```
+[
+    {
+        description: string,
+        credit: number,
+        id: number,
+        name: string,
+        abbr: string,
+        average: number,
+        feedback: [
+            string,
+            string,
+            string
+        ]
+    }
+]
 ```
