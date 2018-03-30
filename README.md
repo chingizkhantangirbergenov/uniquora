@@ -11,7 +11,7 @@ This is the list of server API used for Uniquira
 ```
 
 ## API
-* ### `/api/login
+* ### `/api/login`
 **Method**: `POST`  
 **Body:**
 ```
