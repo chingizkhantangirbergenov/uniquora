@@ -93,6 +93,6 @@ public class JWTUtils {
     public static Boolean isValidToken(String token, String email) {
         final String username = getUsernameFromToken(token);
 
-        return (username.equals(email) && !isTokenExpired(token));
+        return username != null && (username.equals(email) && !isTokenExpired(token));
     }
 }

@@ -1,4 +1,4 @@
-CREATE SCHEMA `uniquora` ;
+CREATE SCHEMA `uniquora`;
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,

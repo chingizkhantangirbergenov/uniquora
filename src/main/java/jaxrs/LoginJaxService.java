@@ -33,7 +33,7 @@ public class LoginJaxService {
         if (user != null) {
             if (BCrypt.checkpw(loginRequest.password, user.hashedPassword)) {
                 RestLoginResponse loginResponse = new RestLoginResponse();
-                loginResponse.userId = user.id;
+                loginResponse.id = user.id;
                 loginResponse.firstName = user.firstName;
                 loginResponse.lastname = user.lastName;
                 loginResponse.email = user.email;

@@ -12,7 +12,7 @@ public class AskRequest {
         return "AskRequest{" +
                 "question='" + question + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + userId +
+                ", id=" + userId +
                 ", token='" + token + '\'' +
                 '}';
     }
