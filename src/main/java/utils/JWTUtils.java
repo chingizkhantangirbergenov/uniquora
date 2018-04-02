@@ -15,7 +15,7 @@ public class JWTUtils {
 
     static final String CLAIM_KEY_USERNAME = "sub";
     static final String CLAIM_KEY_CREATED = "created";
-    private static final String SECRET = "HopeYouWillNeverGuessIt";
+    private static final String SECRET = "itIsInGitHub";
     private static final Long EXPIRATION = 2592000L;
 
     public static String getUsernameFromToken(String token) {
