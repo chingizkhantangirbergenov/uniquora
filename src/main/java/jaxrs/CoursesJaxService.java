@@ -1,8 +1,8 @@
 package jaxrs;
 
 import com.google.gson.Gson;
-import jdbc.FakeData;
 import jdbc.UserJdbc;
+import jdbc.FakeData;
 import model.User;
 import utils.JWTUtils;
 import utils.request.ThreeParamRequest;
