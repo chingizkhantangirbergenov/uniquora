@@ -1,19 +1,21 @@
 package model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Entity
-@Table(name = "feedback")
-public class Feedback {
+@Table(name = "current_courses")
+public class CurrentCourse {
 
     @Id
     public Integer id;
+
+    @Column(name = "user_id")
     public Integer userId;
+
+    @Column(name = "course_id")
     public Integer courseId;
-    public String feedback;
-    public Date created_at;
 
 }

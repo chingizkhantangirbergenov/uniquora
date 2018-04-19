@@ -30,37 +30,44 @@ public class CurrentCoursesJaxService {
 
     }
 
-    @POST
-    @Produces("application/json")
-    public Response getCurrentCourses(String body) {
-        RestMainResponse mainResponse = new RestMainResponse();
+//    @POST
+//    @Produces("application/json")
+//    public Response getCurrentCourses(String body) {
+//        RestMainResponse mainResponse = new RestMainResponse();
+//
+//        Gson gson = new Gson();
+//        TwoParamRequest twoParamRequest = gson.fromJson(body, TwoParamRequest.class);
+//
+//        User user = UserJdbc.getUserById(twoParamRequest.userId);
+//        if (user != null) {
+//            if (JWTUtils.isValidToken(twoParamRequest.token, user.email)) {
+//                mainResponse.isSuccess = true;
+//                // ToDo | here we have to get current courses of current user from REGISTRAR API, but for now I've used just a fake gpa
+//                // the fake current courses are as follows
+//                mainResponse.body = FakeData.getCurrentCourses();
+//            } else {
+//                // ToDo for this case return error code not ok
+//                RestErrorMessage errorMessage = new RestErrorMessage();
+//                errorMessage.message = "not valid token";
+//                mainResponse.isSuccess = false;
+//                mainResponse.body = errorMessage;
+//            }
+//        } else {
+//            // ToDo for this case return error code not ok
+//            RestErrorMessage errorMessage = new RestErrorMessage();
+//            errorMessage.message = "no such user";
+//            mainResponse.isSuccess = false;
+//            mainResponse.body = errorMessage;
+//        }
+//
+//        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+//    }
 
-        Gson gson = new Gson();
-        TwoParamRequest twoParamRequest = gson.fromJson(body, TwoParamRequest.class);
-
-        User user = UserJdbc.getUserById(twoParamRequest.userId);
-        if (user != null) {
-            if (JWTUtils.isValidToken(twoParamRequest.token, user.email)) {
-                mainResponse.isSuccess = true;
-                // ToDo | here we have to get current courses of current user from REGISTRAR API, but for now I've used just a fake gpa
-                // the fake current courses are as follows
-                mainResponse.body = FakeData.getCurrentCourses();
-            } else {
-                // ToDo for this case return error code not ok
-                RestErrorMessage errorMessage = new RestErrorMessage();
-                errorMessage.message = "not valid token";
-                mainResponse.isSuccess = false;
-                mainResponse.body = errorMessage;
-            }
-        } else {
-            // ToDo for this case return error code not ok
-            RestErrorMessage errorMessage = new RestErrorMessage();
-            errorMessage.message = "no such user";
-            mainResponse.isSuccess = false;
-            mainResponse.body = errorMessage;
-        }
-
-        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
-    }
+//    @POST
+//    @Path("/add")
+//    @Produces("application/json")
+//    public Response addCurrentCourses(String body) {
+//        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+//    }
 
 }

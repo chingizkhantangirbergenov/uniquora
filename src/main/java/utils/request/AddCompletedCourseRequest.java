@@ -1,11 +1,11 @@
 package utils.request;
 
-public class FeedbackRequest {
+public class AddCompletedCourseRequest {
 
     public Integer id;
-    public Integer courseId;
+    public String grade;
+    public Integer credit;
     public Integer userId;
-    public String feedback;
     public String token;
 
 }

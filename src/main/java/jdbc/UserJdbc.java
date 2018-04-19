@@ -1,5 +1,6 @@
 package jdbc;
 
+import model.AllUsers;
 import model.User;
 
 import java.sql.*;
@@ -20,8 +21,56 @@ public class UserJdbc {
         return connection != null;
     }
 
+    public static boolean checkUserByEmail(String email) {
+        if (validate()) {
+            String query = "select * from all_users u where u.email_ = '" + email + "';";
+            PreparedStatement preparedStatement = null;
+            try {
+                preparedStatement = connection.prepareStatement(query);
+                ResultSet rs = preparedStatement.executeQuery(query);
+                if (rs.next()) {
+                    System.out.println("YES");
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        System.out.println("NO");
+
+        return false;
+    }
+
+    public static AllUsers getUserFromAllUsersByEmail(String email) {
+        AllUsers user = null;
+        if (validate()) {
+            String query = "select * from all_users u where u.email_ = '" + email + "';";
+            PreparedStatement preparedStatement = null;
+            try {
+                preparedStatement = connection.prepareStatement(query);
+                ResultSet rs = preparedStatement.executeQuery(query);
+                if (rs.next()) {
+                    user = new AllUsers();
+                    user.id = rs.getInt("id");
+                    user.fullName = rs.getString("fullname_");
+                    user.email = rs.getString("email_");
+                    user.idNumber = rs.getString("id_number_");
+                    user.school = rs.getString("school_");
+
+                    return user;
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        System.out.println("NO");
+
+        return user;
+    }
+
     public static boolean addUser(User user) {
-        // ToDo check for whether the user already exists or not, if exists then return false
         if (validate()) {
             String query = "insert into users(firstName, lastName, email, hashedPassword, userCode) values (?, ?, ?, ?, ?)";
             try {
@@ -100,6 +149,7 @@ public class UserJdbc {
                 user.firstName = rs.getString("firstName");
                 user.lastName = rs.getString("lastName");
                 user.email = rs.getString("email");
+                user.major = rs.getString("major");
                 user.hashedPassword = rs.getString("hashedPassword");
             }
         } catch (SQLException e) {
@@ -145,4 +195,5 @@ public class UserJdbc {
 
         return dbConnection;
     }
+
 }

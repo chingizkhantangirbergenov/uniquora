@@ -1,1 +1,0 @@
--- ToDo write a query for creating table questions
