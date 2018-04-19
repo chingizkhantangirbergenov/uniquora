@@ -30,9 +30,9 @@ public class RegisterJaxService {
         Gson gson = new Gson();
         RegisterRequest registerRequest = gson.fromJson(body, RegisterRequest.class);
 
-//        if (!UserJdbc.checkUserByEmail(registerRequest.email)) {
-//            return Response.notAcceptable(null).build();
-//        }
+        if (!UserJdbc.checkUserByEmail(registerRequest.email)) {
+            return Response.notAcceptable(null).build();
+        }
 
         User user = new User();
         user.firstName = registerRequest.firstName;
