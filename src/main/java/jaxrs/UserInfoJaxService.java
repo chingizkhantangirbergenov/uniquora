@@ -1,14 +1,12 @@
 package jaxrs;
 
 import com.google.gson.Gson;
-import jdbc.FakeData;
 import jdbc.UserJdbc;
 import model.AllUsers;
 import model.User;
 import utils.JWTUtils;
 import utils.Utils;
 import utils.request.UserInfoRequest;
-import utils.response.RestErrorMessage;
 import utils.response.RestMainResponse;
 import utils.response.UserInfoResponse;
 
