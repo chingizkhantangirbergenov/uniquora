@@ -5,5 +5,6 @@ public class AddCurrentCourseRequest {
     public Integer id;
     public String token;
     public Integer userId;
+    public Integer credit;
 
 }

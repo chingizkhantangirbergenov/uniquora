@@ -6,6 +6,7 @@ import jdbc.UserJdbc;
 import model.User;
 import utils.JWTUtils;
 import utils.request.AddCompletedCourseRequest;
+import utils.request.AddCurrentCourseGradeRequest;
 import utils.request.AddCurrentCourseRequest;
 import utils.request.TwoParamRequest;
 import utils.response.RestMainResponse;
@@ -82,7 +83,31 @@ public class CoursesJaxService {
         if (user != null) {
             if (JWTUtils.isValidToken(request.token, user.email)) {
                 mainResponse.isSuccess = true;
-                mainResponse.body = CoursesJdbc.addCurrentCourse(request.id, request.userId);
+                mainResponse.body = CoursesJdbc.addCurrentCourse(request.id, request.userId, request.credit);
+            } else {
+                return Response.notAcceptable(null).build();
+            }
+        } else {
+            return Response.notAcceptable(null).build();
+        }
+
+        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+    }
+
+    @POST
+    @Path("/current/add/expected_grade")
+    @Produces("application/json")
+    public Response addCurrentCoursesExpectedGrade(String body) {
+        RestMainResponse mainResponse = new RestMainResponse();
+
+        Gson gson = new Gson();
+        AddCurrentCourseGradeRequest request = gson.fromJson(body, AddCurrentCourseGradeRequest.class);
+
+        User user = UserJdbc.getUserById(request.userId);
+        if (user != null) {
+            if (JWTUtils.isValidToken(request.token, user.email)) {
+                mainResponse.isSuccess = true;
+                CoursesJdbc.addCurrentCourseExpectedGrade(request.courseId, request.grade);
             } else {
                 return Response.notAcceptable(null).build();
             }
