@@ -41,18 +41,12 @@ public class LoginJaxService {
                 mainResponse.body = loginResponse;
                 mainResponse.token = JWTUtils.generateToken(user.email);
             } else {
-                // ToDo for this case return error code not ok
-                RestErrorMessage errorMessage = new RestErrorMessage();
-                errorMessage.message = "incorrect password";
-                mainResponse.isSuccess = false;
-                mainResponse.body = errorMessage;
+                System.out.println("password");
+                return Response.notAcceptable(null).build();
             }
         } else {
-            // ToDo for this case return error code not ok
-            RestErrorMessage errorMessage = new RestErrorMessage();
-            errorMessage.message = "no such user";
-            mainResponse.isSuccess = false;
-            mainResponse.body = errorMessage;
+            System.out.println("user");
+            return Response.notAcceptable(null).build();
         }
 
         return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();

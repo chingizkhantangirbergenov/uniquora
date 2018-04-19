@@ -1,13 +1,13 @@
 package jaxrs;
 
 import com.google.gson.Gson;
-import jdbc.FakeData;
+import jdbc.CoursesJdbc;
 import jdbc.UserJdbc;
 import model.User;
 import utils.JWTUtils;
-import utils.request.ThreeParamRequest;
-import utils.response.CourseResponse;
-import utils.response.RestErrorMessage;
+import utils.request.AddCompletedCourseRequest;
+import utils.request.AddCurrentCourseRequest;
+import utils.request.TwoParamRequest;
 import utils.response.RestMainResponse;
 
 import javax.ws.rs.POST;
@@ -15,8 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/courses")
 public class CoursesJaxService {
@@ -30,38 +28,118 @@ public class CoursesJaxService {
         RestMainResponse mainResponse = new RestMainResponse();
 
         Gson gson = new Gson();
-        ThreeParamRequest threeParamRequest = gson.fromJson(body, ThreeParamRequest.class);
+        TwoParamRequest twoParamRequest = gson.fromJson(body, TwoParamRequest.class);
 
-        User user = UserJdbc.getUserById(threeParamRequest.userId);
+        User user = UserJdbc.getUserById(twoParamRequest.userId);
         if (user != null) {
-            if (JWTUtils.isValidToken(threeParamRequest.token, user.email)) {
+            if (JWTUtils.isValidToken(twoParamRequest.token, user.email)) {
                 mainResponse.isSuccess = true;
-                // ToDo | here we have to get courses from REGISTRAR API, but for now I've used just a fake gpa
-                // the fake courses are as follows
-                List<CourseResponse> coursesResponse = FakeData.getCourses();
-                if (threeParamRequest.name != null) {
-                    mainResponse.body = new ArrayList<CourseResponse>();
-                    for (CourseResponse courseResponse : coursesResponse) {
-                        if (courseResponse.name.contains(threeParamRequest.name)) {
-                            ((ArrayList) mainResponse.body).add(courseResponse);
-                        }
-                    }
-                } else {
-                    mainResponse.body = coursesResponse;
-                }
+                mainResponse.body = CoursesJdbc.getAllCourses();
             } else {
-                // ToDo for this case return error code not ok
-                RestErrorMessage errorMessage = new RestErrorMessage();
-                errorMessage.message = "not valid token";
-                mainResponse.isSuccess = false;
-                mainResponse.body = errorMessage;
+                return Response.notAcceptable(null).build();
             }
         } else {
-            // ToDo for this case return error code not ok
-            RestErrorMessage errorMessage = new RestErrorMessage();
-            errorMessage.message = "no such user";
-            mainResponse.isSuccess = false;
-            mainResponse.body = errorMessage;
+            return Response.notAcceptable(null).build();
+        }
+
+        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+    }
+
+    @POST
+    @Path("/current")
+    @Produces("application/json")
+    public Response getCurrentCourses(String body) {
+        RestMainResponse mainResponse = new RestMainResponse();
+
+        Gson gson = new Gson();
+        TwoParamRequest twoParamRequest = gson.fromJson(body, TwoParamRequest.class);
+
+        User user = UserJdbc.getUserById(twoParamRequest.userId);
+        if (user != null) {
+            if (JWTUtils.isValidToken(twoParamRequest.token, user.email)) {
+                mainResponse.isSuccess = true;
+                mainResponse.body = CoursesJdbc.getCurrentCoursesByUserId(user.id);
+            } else {
+                return Response.notAcceptable(null).build();
+            }
+        } else {
+            return Response.notAcceptable(null).build();
+        }
+
+        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+    }
+
+    @POST
+    @Path("/current/add")
+    @Produces("application/json")
+    public Response addCurrentCourses(String body) {
+        RestMainResponse mainResponse = new RestMainResponse();
+
+        Gson gson = new Gson();
+        AddCurrentCourseRequest request = gson.fromJson(body, AddCurrentCourseRequest.class);
+
+        User user = UserJdbc.getUserById(request.userId);
+        if (user != null) {
+            if (JWTUtils.isValidToken(request.token, user.email)) {
+                mainResponse.isSuccess = true;
+                mainResponse.body = CoursesJdbc.addCurrentCourse(request.id, request.userId);
+            } else {
+                return Response.notAcceptable(null).build();
+            }
+        } else {
+            return Response.notAcceptable(null).build();
+        }
+
+        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+    }
+
+    @POST
+    @Path("/completed")
+    @Produces("application/json")
+    public Response getCompletedCourses(String body) {
+        RestMainResponse mainResponse = new RestMainResponse();
+
+        Gson gson = new Gson();
+        TwoParamRequest twoParamRequest = gson.fromJson(body, TwoParamRequest.class);
+
+        User user = UserJdbc.getUserById(twoParamRequest.userId);
+        if (user != null) {
+            if (JWTUtils.isValidToken(twoParamRequest.token, user.email)) {
+                mainResponse.isSuccess = true;
+                mainResponse.body = CoursesJdbc.getCompletedCoursesByUserId(user.id);
+            } else {
+                return Response.notAcceptable(null).build();
+            }
+        } else {
+            return Response.notAcceptable(null).build();
+        }
+
+        return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();
+    }
+
+    @POST
+    @Path("/completed/add")
+    @Produces("application/json")
+    public Response addCompletedCourses(String body) {
+        RestMainResponse mainResponse = new RestMainResponse();
+
+        Gson gson = new Gson();
+        AddCompletedCourseRequest request = gson.fromJson(body, AddCompletedCourseRequest.class);
+
+        User user = UserJdbc.getUserById(request.userId);
+        if (user != null) {
+            if (JWTUtils.isValidToken(request.token, user.email)) {
+                mainResponse.isSuccess = true;
+                mainResponse.body = CoursesJdbc.addCompletedCourse(
+                        request.id,
+                        request.userId,
+                        request.credit,
+                        request.grade);
+            } else {
+                return Response.notAcceptable(null).build();
+            }
+        } else {
+            return Response.notAcceptable(null).build();
         }
 
         return Response.ok(gson.toJson(mainResponse), MediaType.APPLICATION_JSON).build();

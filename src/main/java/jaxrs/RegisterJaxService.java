@@ -30,6 +30,10 @@ public class RegisterJaxService {
         Gson gson = new Gson();
         RegisterRequest registerRequest = gson.fromJson(body, RegisterRequest.class);
 
+//        if (!UserJdbc.checkUserByEmail(registerRequest.email)) {
+//            return Response.notAcceptable(null).build();
+//        }
+
         User user = new User();
         user.firstName = registerRequest.firstName;
         user.lastName = registerRequest.lastName;
@@ -45,11 +49,6 @@ public class RegisterJaxService {
             mainResponse.isSuccess = true;
             mainResponse.body = registerResponse;
         } else {
-            // ToDo think about error message (how to return it)
-            RestErrorMessage errorMessage = new RestErrorMessage();
-            errorMessage.message = "this email is already used";
-            mainResponse.isSuccess = false;
-            mainResponse.body = errorMessage;
             return Response.notAcceptable(null).build();
         }
 
