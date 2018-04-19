@@ -32,6 +32,7 @@ CREATE TABLE all_courses (
 	  PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS current_courses;
 CREATE TABLE current_courses (
     id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
