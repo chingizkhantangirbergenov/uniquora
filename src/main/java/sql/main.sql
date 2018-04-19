@@ -34,6 +34,8 @@ CREATE TABLE current_courses (
     id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id int(10) UNSIGNED,
     course_id int(10) UNSIGNED,
+    credit_ int(10),
+    expected_grade varchar(255),
 	  PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (course_id) REFERENCES all_courses(id)

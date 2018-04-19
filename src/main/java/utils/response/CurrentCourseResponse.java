@@ -1,11 +1,11 @@
 package utils.response;
 
-import java.util.HashMap;
-
 public class CurrentCourseResponse {
 
-    public HashMap<String, String> map;
+    public Integer id;
     public String name;
+    public String expectedGrade;
+    public Integer credit;
     public String abbr;
 
 }

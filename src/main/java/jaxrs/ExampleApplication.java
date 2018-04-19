@@ -14,6 +14,7 @@ public class ExampleApplication extends Application {
         singletons.add(new RegisterJaxService());
         singletons.add(new LoginJaxService());
         singletons.add(new CoursesJaxService());
+        singletons.add(new SyllabusJaxService());
         singletons.add(new UserInfoJaxService());
     }
 

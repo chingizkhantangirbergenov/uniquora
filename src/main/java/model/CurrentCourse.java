@@ -18,4 +18,10 @@ public class CurrentCourse {
     @Column(name = "course_id")
     public Integer courseId;
 
+    @Column(name = "expected_grade")
+    public String expectedGrade;
+
+    @Column(name = "credit_")
+    public Integer credit;
+
 }

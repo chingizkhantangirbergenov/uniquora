@@ -1,13 +1,15 @@
 package jdbc;
 
-import model.AllCourses;
-import model.AllUsers;
-import model.CompletedCourse;
-import model.CurrentCourse;
+import model.*;
+import utils.Utils;
 import utils.request.AddCurrentCourseRequest;
+import utils.request.AddSyllabusRequest;
 import utils.response.CompletedCourseResponse;
 import utils.response.CourseResponse;
+import utils.response.CurrentCourseResponse;
+import utils.response.SyllabusResponse;
 
+import javax.rmi.CORBA.Util;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +28,40 @@ public class CoursesJdbc {
         return connection != null;
     }
 
-    public static AllCourses addCurrentCourse(Integer courseId, Integer userId) {
+    public static void addCurrentCourseExpectedGrade(Integer courseId, String grade) {
+        String query = "insert into current_courses(expected_grade) values (?) where id = " + courseId + ";";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, grade);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static CurrentCourseResponse addCurrentCourse(Integer courseId, Integer userId, Integer credit) {
+        CurrentCourseResponse res = new CurrentCourseResponse();
         AllCourses course = getCourseById(courseId);
-        String query = "insert into current_courses(user_id, course_id) values (?, ?)";
+        String query = "insert into current_courses(user_id, course_id, credit_) values (?, ?, ?);";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, courseId);
+            preparedStatement.setInt(3, credit);
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+        CurrentCourse currentCourse = getLastCurrentCourseById();
 
-        return course;
+        res.expectedGrade = Utils.calculateExpectedGpa(userId);
+        res.abbr = course.abbr;
+        res.credit = currentCourse.credit;
+        res.id = currentCourse.id;
+        res.name = course.name;
+
+        return res;
     }
 
     public static CompletedCourseResponse addCompletedCourse(Integer courseId,
@@ -81,8 +103,8 @@ public class CoursesJdbc {
         return res;
     }
 
-    public static List<AllCourses> getCurrentCoursesByUserId(Integer userId) {
-        List<AllCourses> res = new ArrayList<>();
+    public static List<CurrentCourseResponse> getCurrentCoursesByUserId(Integer userId) {
+        List<CurrentCourseResponse> res = new ArrayList<>();
         List<CurrentCourse> currentCourses = new ArrayList<>();
 
         if (validate()) {
@@ -96,6 +118,8 @@ public class CoursesJdbc {
                     course.id = rs.getInt("id");
                     course.userId = rs.getInt("user_id");
                     course.courseId = rs.getInt("course_id");
+                    course.credit = rs.getInt("credit_");
+                    course.expectedGrade = rs.getString("expected_grade");
                     currentCourses.add(course);
                 }
             } catch (SQLException e) {
@@ -105,7 +129,15 @@ public class CoursesJdbc {
         }
 
         for (CurrentCourse currentCourse : currentCourses) {
-            res.add(getCourseById(currentCourse.courseId));
+            AllCourses courseFromAll = getCourseById(currentCourse.courseId);
+            CurrentCourseResponse currentCourseResponse = new CurrentCourseResponse();
+            currentCourseResponse.id = currentCourse.id;
+            currentCourseResponse.name = courseFromAll.name;
+            currentCourseResponse.abbr = courseFromAll.abbr;
+            currentCourseResponse.expectedGrade = Utils.calculateExpectedGpa(userId);
+            currentCourseResponse.credit = currentCourse.credit;
+
+            res.add(currentCourseResponse);
         }
 
         return res;
@@ -160,7 +192,108 @@ public class CoursesJdbc {
         }
 
         return course;
+    }
 
+    public static List<SyllabusResponse> getSyllabus(Integer currentCourseId) {
+        List<SyllabusResponse> res = new ArrayList<>();
+
+        List<Syllabus> syllabi = new ArrayList<>();
+
+        if (validate()) {
+            String query = "select * from syllabus s where s.current_course_id = " + currentCourseId + ";";
+            PreparedStatement preparedStatement;
+            try {
+                preparedStatement = connection.prepareStatement(query);
+                ResultSet rs = preparedStatement.executeQuery(query);
+                while (rs.next()) {
+                    Syllabus syllabus = new Syllabus();
+                    syllabus.id = rs.getInt("id");
+                    syllabus.contribution = rs.getInt("contribution");
+                    syllabus.title = rs.getString("title");
+                    syllabus.weight = rs.getInt("weight");
+                    syllabus.grade = rs.getInt("grade");
+                    syllabi.add(syllabus);
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        for (Syllabus syllabus : syllabi) {
+            SyllabusResponse syllabusResponse = new SyllabusResponse();
+            syllabusResponse.title = syllabus.title;
+            syllabusResponse.weight = syllabus.weight;
+            syllabusResponse.grade = syllabus.grade;
+            syllabusResponse.contribution = syllabus.contribution;
+
+            res.add(syllabusResponse);
+        }
+
+        return res;
+    }
+
+    public static SyllabusResponse addSyllabus(AddSyllabusRequest request) {
+        SyllabusResponse syllabusResponse = new SyllabusResponse();
+//        CurrentCourse course = getCurrentCourseById(request.courseId);
+        String query = "insert into syllabus(current_course_id, title, weight, grade, contribution) " +
+                "values (?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, request.courseId);
+            preparedStatement.setString(2, request.title);
+            preparedStatement.setInt(3, request.weight);
+            preparedStatement.setInt(4, request.grade);
+            preparedStatement.setInt(5, request.contribution);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        syllabusResponse.title = request.title;
+        syllabusResponse.weight = request.weight;
+        syllabusResponse.grade = request.grade;
+        syllabusResponse.contribution = request.contribution;
+
+        return syllabusResponse;
+
+    }
+
+    private static CurrentCourse getLastCurrentCourseById() {
+        CurrentCourse course = new CurrentCourse();
+        if (validate()) {
+            String selectSQL = "select * from current_courses c order by c.id desc;";
+            getCurrentCourse(course, selectSQL);
+        }
+
+        return course;
+    }
+
+    private static CurrentCourse getCurrentCourseById(Integer courseId) {
+        CurrentCourse course = new CurrentCourse();
+        if (validate()) {
+            String selectSQL = "select * from current_courses c where c.id = '" + courseId + "'";
+            getCurrentCourse(course, selectSQL);
+        }
+
+        return course;
+    }
+
+    private static void getCurrentCourse(CurrentCourse res, String query) {
+        PreparedStatement preparedStatement;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet rs = preparedStatement.executeQuery(query);
+            if (rs.next()) {
+                res.id = rs.getInt("id");
+                res.userId = rs.getInt("user_id");
+                res.courseId = rs.getInt("course_id");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private static void getCourse(AllCourses res, String query) {
